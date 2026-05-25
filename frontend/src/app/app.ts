@@ -29,7 +29,7 @@ export class App {
   constructor(private router: Router) {}
 
   onTabChange(index: number) {
-    const routes = ['', 'impressoras', 'impressoras/nova', 'importacao'];
+    const routes = ['', 'impressoras', 'substituicoes', 'impressoras/nova', 'importacao'];
     this.router.navigate([routes[index]]);
   }
 }

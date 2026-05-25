@@ -17,4 +17,5 @@ public class DashboardStatsDTO {
     private long totalComDefeito;
     private long totalRetiradas;
     private long totalGeral;
+    private long totalModelos;
 }

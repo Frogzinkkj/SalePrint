@@ -92,12 +92,22 @@
 
       <!-- Secondary Row -->
       <div class="secondary-row">
-        <!-- Fabricantes Chart (left) -->
+        <!-- Modelos Chart (left) -->
         <div class="chart-card">
-          <h3>Fabricantes no Inventário</h3>
+          <h3>Modelos no Inventário</h3>
           <div class="chart-placeholder">
-            <p>Distribuição quantitativa de marcas afins.</p>
-            <!-- TODO: Add Chart.js or similar -->
+            @if (modelosDistribuicao.length > 0) {
+              <div class="modelos-list">
+                @for (item of modelosDistribuicao; track item.modelo) {
+                  <div class="modelo-item">
+                    <span class="modelo-nome">{{ item.modelo }}</span>
+                    <span class="modelo-qtd">{{ item.quantidade }} un.</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p>Distribuição quantitativa de modelos de impressoras.</p>
+            }
           </div>
         </div>
 

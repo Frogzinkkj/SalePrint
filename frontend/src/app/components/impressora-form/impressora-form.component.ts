@@ -10,6 +10,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { forkJoin } from 'rxjs'; // Adicionado para resolver o problema de concorrência assíncrona
+
 import { ImpressoraService } from '../../core/services/impressora.service';
 import { SetorService } from '../../core/services/setor.service';
 import { LocalidadeService } from '../../core/services/localidade.service';
@@ -81,26 +83,50 @@ export class ImpressoraFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadData();
     const id = this.route.snapshot.paramMap.get('id');
+    
     if (id && id !== 'nova') {
       this.editId = Number(id);
       this.form.get('numeroSerie')?.disable();
-      this.impressoraService.buscarPorId(this.editId).subscribe({
-        next: (imp) => {
-          this.form.patchValue({
-            marca: imp.marca,
-            modelo: imp.modelo,
-            numeroSerie: imp.numeroSerie,
-            ip: imp.ip,
-            status: imp.status,
-            localidadeId: this.setores.find(s => s.id === imp.setorId)?.localidadeId,
-            setorId: imp.setorId,
-            observacao: imp.observacao ?? ''
+      this.loading = true;
+
+      // Carrega primeiro as dependências estruturais em paralelo
+      forkJoin({
+        localidades: this.localidadeService.listar(),
+        setores: this.setorService.listar()
+      }).subscribe({
+        next: ({ localidades, setores }) => {
+          this.localidades = localidades;
+          this.setores = setores;
+
+          // Agora que as listas existem no componente, busca com segurança os dados da impressora
+          this.impressoraService.buscarPorId(this.editId!).subscribe({
+            next: (imp) => {
+              this.form.patchValue({
+                marca: imp.marca,
+                modelo: imp.modelo,
+                numeroSerie: imp.numeroSerie,
+                ip: imp.ip,
+                status: imp.status,
+                localidadeId: this.setores.find(s => s.id === imp.setorId)?.localidadeId,
+                setorId: imp.setorId,
+                observacao: imp.observacao ?? ''
+              });
+              this.loading = false;
+            },
+            error: () => {
+              this.snackBar.open('Impressora não encontrada', 'Fechar', { duration: 4000 });
+              this.loading = false;
+            }
           });
         },
-        error: () => this.snackBar.open('Impressora não encontrada', 'Fechar', { duration: 4000 })
+        error: () => {
+          this.snackBar.open('Erro ao carregar dados de suporte', 'Fechar', { duration: 4000 });
+          this.loading = false;
+        }
       });
+    } else {
+      this.loadData();
     }
   }
 

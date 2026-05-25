@@ -41,4 +41,7 @@ public interface ImpressoraRepository extends JpaRepository<Impressora, Long> {
     List<Impressora> findAllComRelacoes();
 
     long countByStatus(StatusImpressora status);
+
+    @Query("SELECT COUNT(DISTINCT i.modelo) FROM Impressora i")
+    long countDistinctModelos();
 }

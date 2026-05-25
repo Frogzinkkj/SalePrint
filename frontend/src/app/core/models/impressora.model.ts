@@ -21,4 +21,5 @@ export interface DashboardStats {
   totalComDefeito: number;
   totalRetiradas: number;
   totalGeral: number;
+  totalModelos?: number;
 }

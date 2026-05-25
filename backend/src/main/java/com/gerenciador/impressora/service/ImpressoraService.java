@@ -93,6 +93,7 @@ public class ImpressoraService {
                 .totalComDefeito(impressoraRepository.countByStatus(StatusImpressora.COM_DEFEITO_INTERNO))
                 .totalRetiradas(impressoraRepository.countByStatus(StatusImpressora.RETIRADA))
                 .totalGeral(impressoraRepository.count())
+                .totalModelos(impressoraRepository.countDistinctModelos())
                 .build();
     }
 
