@@ -143,3 +143,4 @@ glpi.url=https://seu-glpi/apirest.php/Ticket
 ## Licença
 
 Uso interno.
+# Gerenciador-Impressoras
