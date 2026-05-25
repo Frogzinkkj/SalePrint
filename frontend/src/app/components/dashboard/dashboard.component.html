@@ -1,0 +1,140 @@
+<div class="dashboard-wrapper">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1>Dashboard Operacional</h1>
+      <p>Visão em tempo real do status das impressoras e integrações automatizadas.</p>
+    </div>
+    <button mat-icon-button (click)="carregar()" matTooltip="Atualizar indicadores">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-wrapper">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando dados...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error && !loading) {
+    <div class="error-wrapper">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="carregar()">
+        <mat-icon>refresh</mat-icon> Tentar novamente
+      </button>
+    </div>
+  }
+
+  <!-- Stats -->
+  @if (stats && !loading && !error) {
+    <div class="stats-container">
+      <!-- KPI Cards -->
+      <div class="kpi-row">
+        <div class="kpi-card kpi-total">
+          <div class="kpi-icon">
+            <mat-icon>inventory_2</mat-icon>
+          </div>
+          <div class="kpi-info">
+            <h4>TOTAL INVENTÁRIO</h4>
+            <p class="kpi-value">{{ stats.totalGeral }}</p>
+            <span class="kpi-desc">Equipamentos cadastrados</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-ativas">
+          <div class="kpi-icon">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="kpi-info">
+            <h4>EM PRODUÇÃO (ATIVAS)</h4>
+            <p class="kpi-value">{{ stats.totalAtivas }}</p>
+            <span class="kpi-desc">Impressoras em uso ativo</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-backup">
+          <div class="kpi-icon">
+            <mat-icon>backup</mat-icon>
+          </div>
+          <div class="kpi-info">
+            <h4>BACKUP (RESERVA)</h4>
+            <p class="kpi-value">{{ stats.totalBackups }}</p>
+            <span class="kpi-desc">Prontas para substituição</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-defeito">
+          <div class="kpi-icon">
+            <mat-icon>error</mat-icon>
+          </div>
+          <div class="kpi-info">
+            <h4>DEFEITO TÉCNICO</h4>
+            <p class="kpi-value">{{ stats.totalComDefeito }}</p>
+            <span class="kpi-desc">Chamado GLPI disparado</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-manutencao">
+          <div class="kpi-icon">
+            <mat-icon>build</mat-icon>
+          </div>
+          <div class="kpi-info">
+            <h4>MANUTENÇÃO QUALYCOPY</h4>
+            <p class="kpi-value">{{ stats.totalManutencaoQualycopy }}</p>
+            <span class="kpi-desc">Enfiadas p/ laboratorio externo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Row -->
+      <div class="secondary-row">
+        <!-- Fabricantes Chart (left) -->
+        <div class="chart-card">
+          <h3>Fabricantes no Inventário</h3>
+          <div class="chart-placeholder">
+            <p>Distribuição quantitativa de marcas afins.</p>
+            <!-- TODO: Add Chart.js or similar -->
+          </div>
+        </div>
+
+        <!-- GLPI Integration (right) -->
+        <div class="glpi-card">
+          <div class="glpi-header">
+            <mat-icon class="glpi-icon">dns</mat-icon>
+            <div class="glpi-title">
+              <h4>GLPI INTEGRATION AGENT (SIMULAÇÃO WEBCLIENT)</h4>
+              <span class="glpi-status active">● ATIVO</span>
+            </div>
+          </div>
+          <div class="glpi-content">
+            <p class="glpi-desc">
+              Sempre que uma impressora recebe um status COM_DEFEITO_INTERNO, o serviço REST dispara um POST simulado para abrir uma OS no GLPI de TI.
+            </p>
+            <div class="terminal">
+              <div class="terminal-line">
+                <span class="terminal-prompt">→ POST /api/glpi/tickets</span>
+              </div>
+              <div class="terminal-line">
+                <span class="terminal-text highlight">Chamado de defeito de impressora - Epson EcoTank L3250</span>
+              </div>
+              <div class="terminal-line">
+                <span class="terminal-desc">Abertura automática de chamado técnico: S/N: KB9121130 | IP: 192.168.2.50 | Setor: Almoxarifado. Descrição do Defeito:</span>
+              </div>
+              <div class="terminal-line">
+                <span class="terminal-status">STATUS: Ticket criado com sucesso | CHAMADO: GLPI-6593 | PRIORIDADE: High</span>
+              </div>
+            </div>
+            <div class="glpi-footer">
+              <span>Servidor NVM local executando em port: 3000 (Proxy)</span>
+              <span>Logs mantidos em memória integrada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Registrar substituição de impressora</h2>
+<mat-dialog-content>
+  <p class="hint">
+    Informe qual impressora <strong>nova</strong> substitui qual <strong>antiga</strong> (ex.: QPD131088 → U65160A3H235153).
+  </p>
+
+  <form [formGroup]="form" class="form-grid">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>S/N impressora NOVA (entra no lugar)</mat-label>
+      <input matInput formControlName="numeroSerieNova" (input)="filtrarAntiga()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>S/N impressora ANTIGA (substituída)</mat-label>
+      <input
+        matInput
+        formControlName="numeroSerieAntiga"
+        (input)="filtrarAntiga()"
+        [matAutocomplete]="autoAntiga"
+      />
+      <mat-autocomplete #autoAntiga="matAutocomplete" (optionSelected)="selecionarAntiga($event)">
+        @for (imp of sugestoesAntiga; track imp.id) {
+          <mat-option [value]="imp">
+            {{ imp.numeroSerie }} — {{ imp.marca }} {{ imp.modelo }} ({{ imp.setorNome }})
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Responsável</mat-label>
+      <input matInput formControlName="responsavel" placeholder="Ex: TI, Marcel" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Observação</mat-label>
+      <textarea matInput rows="2" formControlName="observacao"></textarea>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="atualizarStatus" class="full">
+      Atualizar status automaticamente (antiga → Retirada, nova → Ativa)
+    </mat-checkbox>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button type="button" mat-button (click)="cancelar()">Cancelar</button>
+  <button type="button" mat-raised-button color="primary" (click)="confirmar()" [disabled]="form.invalid">
+    Registrar
+  </button>
+</mat-dialog-actions>

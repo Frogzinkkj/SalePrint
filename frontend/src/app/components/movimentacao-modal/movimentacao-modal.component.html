@@ -1,0 +1,46 @@
+<h2 mat-dialog-title>Movimentar impressora</h2>
+<mat-dialog-content>
+  <p class="info">
+    <strong>{{ impressora.marca }} {{ impressora.modelo }}</strong><br />
+    IP: {{ impressora.ip }} | S/N: {{ impressora.numeroSerie }}
+  </p>
+
+  <form [formGroup]="form" class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Novo status</mat-label>
+      <mat-select formControlName="statusAplicado">
+        @for (s of statusOptions; track s) {
+          <mat-option [value]="s">{{ statusLabels[s] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Novo setor</mat-label>
+      <mat-select formControlName="setorDestinoId">
+        @for (setor of setores; track setor.id) {
+          <mat-option [value]="setor.id">{{ setor.nome }} — {{ setor.localidadeNome }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Responsável</mat-label>
+      <input matInput formControlName="responsavel" placeholder="Ex: Marcel, TI, Qualycopy" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>OS Qualycopy</mat-label>
+      <input matInput formControlName="osQualycopy" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Descrição</mat-label>
+      <textarea matInput rows="2" formControlName="descricao"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="confirmar()" [disabled]="form.invalid">Confirmar</button>
+</mat-dialog-actions>

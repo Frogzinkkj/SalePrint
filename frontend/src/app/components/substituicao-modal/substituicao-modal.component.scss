@@ -1,0 +1,15 @@
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 480px;
+}
+
+.full {
+  width: 100%;
+}
+
+.hint {
+  margin-bottom: 1rem;
+  color: rgba(0, 0, 0, 0.65);
+}

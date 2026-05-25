@@ -1,0 +1,46 @@
+<mat-toolbar class="app-toolbar">
+  <div class="toolbar-content">
+    <div class="brand">
+      <mat-icon>print</mat-icon>
+      <span class="brand-name">GESTÃO DE ATIVOS DA TI</span>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <mat-tab-group mat-align-tabs="start" class="nav-tabs" (selectedIndexChange)="onTabChange($event)">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard Geral</span>
+      </ng-template>
+      <div></div>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>devices</mat-icon>
+        <span>Listagem de Impressoras</span>
+      </ng-template>
+      <div></div>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>add_circle</mat-icon>
+        <span>Cadastrar Nova Impressora</span>
+      </ng-template>
+      <div></div>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>upload_file</mat-icon>
+        <span>Carga Inicial (CSV)</span>
+      </ng-template>
+      <div></div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-toolbar>
+
+<mat-sidenav-container class="main-container">
+  <mat-sidenav-content class="content-area">
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,62 @@
+<a mat-button routerLink="/impressoras"><mat-icon>arrow_back</mat-icon> Voltar</a>
+
+@if (impressora) {
+  <h1>Histórico — {{ impressora.marca }} {{ impressora.modelo }}</h1>
+  <p class="sub">IP {{ impressora.ip }} | S/N {{ impressora.numeroSerie }}</p>
+}
+
+@if (loading) {
+  <mat-spinner diameter="40"></mat-spinner>
+} @else {
+  @if (substituicoes.length > 0) {
+    <h2>Substituições</h2>
+    <div class="substituicoes">
+      @for (sub of substituicoes; track sub.id) {
+        <mat-card class="sub-card">
+          <div class="data">{{ sub.dataSubstituicao | date: 'dd/MM/yyyy HH:mm' }}</div>
+          @if (sub.impressoraNovaId === impressora?.id) {
+            <p>
+              Esta impressora <strong>substituiu</strong>
+              {{ sub.antigaNumeroSerie }} ({{ sub.antigaMarca }} {{ sub.antigaModelo }})
+            </p>
+            <small>Responsável: {{ sub.responsavel }}</small>
+          } @else {
+            <p>
+              Esta impressora foi <strong>substituída por</strong>
+              {{ sub.novaNumeroSerie }} ({{ sub.novaMarca }} {{ sub.novaModelo }})
+            </p>
+            <small>Responsável: {{ sub.responsavel }}</small>
+          }
+        </mat-card>
+      }
+    </div>
+  }
+
+  <h2>Movimentações</h2>
+  @if (historico.length === 0) {
+    <p>Nenhuma movimentação registrada.</p>
+  } @else {
+    <div class="timeline">
+      @for (item of historico; track item.id) {
+        <mat-card class="timeline-item">
+          <div class="dot"></div>
+          <div class="content">
+            <div class="data">{{ item.dataMovimentacao | date: 'dd/MM/yyyy HH:mm' }}</div>
+            <div><strong>Status:</strong> {{ labelStatus(item.statusAplicado) }}</div>
+            <div>
+              <strong>Setor:</strong>
+              {{ item.setorOrigemNome || '—' }} → {{ item.setorDestinoNome }}
+            </div>
+            <div><strong>Responsável:</strong> {{ item.responsavel }}</div>
+            @if (item.osQualycopy) {
+              <div><strong>OS Qualycopy:</strong> {{ item.osQualycopy }}</div>
+            }
+            @if (item.descricao) {
+              <div class="desc">{{ item.descricao }}</div>
+            }
+          </div>
+        </mat-card>
+      }
+    </div>
+  }
+}

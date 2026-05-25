@@ -1,0 +1,129 @@
+/* Toolbar */
+.app-toolbar {
+  background: linear-gradient(135deg, #003f7f 0%, #004fa6 100%) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 0 !important;
+  height: auto !important;
+  flex-direction: column;
+
+  .toolbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+        color: #ffffff;
+      }
+
+      .brand-name {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #ffffff;
+      }
+
+      .brand-subtitle {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.8);
+        margin-left: 1rem;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 0.5rem;
+
+      button {
+        color: #ffffff !important;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+  }
+}
+
+/* Tabs Navigation */
+.nav-tabs {
+  background-color: linear-gradient(135deg, #003f7f 0%, #004fa6 100%) !important;
+
+  ::ng-deep {
+    .mat-tab-body-wrapper {
+      display: none;
+    }
+
+    .mat-mdc-tab-labels {
+      background: transparent !important;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .mat-mdc-tab-label {
+      color: #ffffff !important;
+      background: transparent !important;
+    }
+
+    .mat-mdc-tab-label span,
+    .mat-mdc-tab-label .mdc-tab__text-label,
+    .mat-mdc-tab-label-content {
+      color: #ffffff !important;
+    }
+
+    .mdc-tab {
+      color: #ffffff !important;
+    }
+
+    .mdc-tab__text-label {
+      color: #ffffff !important;
+    }
+
+    .mat-mdc-tab-label-active {
+      color: #ffffff !important;
+
+      span,
+      .mdc-tab__text-label,
+      .mat-mdc-tab-label-content {
+        color: #ffffff !important;
+      }
+    }
+  }
+}
+
+/* Main Container */
+.main-container {
+  height: calc(100vh - 200px);
+}
+
+.content-area {
+  overflow: auto;
+  display: block;
+  min-height: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-toolbar {
+    flex-direction: column;
+  }
+
+  .nav-tabs::ng-deep .mat-tab-label {
+    font-size: 12px;
+    padding: 0 1rem;
+
+    span {
+      display: none;
+    }
+  }
+}

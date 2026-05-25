@@ -1,0 +1,113 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Substituições de Impressoras</h1>
+      <p class="subtitle">Histórico de trocas e atualizações de equipamentos</p>
+    </div>
+    <button type="button" mat-raised-button color="primary" (click)="abrirModal()" class="btn-novo">
+      <mat-icon>swap_horiz</mat-icon>
+      Nova Substituição
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  @if (error) {
+    <div class="error-message">
+      <mat-icon>error_outline</mat-icon>
+      <div class="error-content">
+        <strong>Erro ao carregar substituições</strong>
+        <p>{{ error }}</p>
+      </div>
+      <button mat-icon-button (click)="carregar()" matTooltip="Tentar novamente">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando substituições...</p>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!loading && !error && dataSource.data.length === 0) {
+    <div class="empty-state">
+      <mat-icon>swap_horiz</mat-icon>
+      <h3>Nenhuma substituição registrada</h3>
+      <p>Comece registrando a primeira substituição de impressora</p>
+      <button type="button" mat-raised-button color="primary" (click)="abrirModal()">
+        <mat-icon>add</mat-icon> Nova Substituição
+      </button>
+    </div>
+  }
+
+  <!-- Cards Grid -->
+  @if (!loading && !error && dataSource.data.length > 0) {
+    <div class="cards-container">
+      <p class="count">{{ dataSource.data.length }} substituição(ões) encontrada(s)</p>
+      
+      <div class="cards-grid">
+        @for (item of dataSource.data; track item.id) {
+          <mat-card class="substituicao-card">
+            <!-- Data -->
+            <div class="card-date">
+              <mat-icon>schedule</mat-icon>
+              {{ item.dataSubstituicao | date: 'dd/MM/yyyy HH:mm' }}
+            </div>
+
+            <!-- De → Para -->
+            <div class="card-content">
+              <!-- Antiga -->
+              <div class="equipamento antiga">
+                <div class="icon-box">
+                  <mat-icon>print</mat-icon>
+                </div>
+                <div class="info">
+                  <span class="label">Retirada</span>
+                  <strong class="sn">{{ item.antigaNumeroSerie }}</strong>
+                  <small class="modelo">{{ item.antigaMarca }} {{ item.antigaModelo }}</small>
+                  <small class="setor">{{ item.antigaSetorNome }}</small>
+                </div>
+              </div>
+
+              <!-- Arrow -->
+              <div class="arrow">
+                <mat-icon>arrow_forward</mat-icon>
+              </div>
+
+              <!-- Nova -->
+              <div class="equipamento nova">
+                <div class="icon-box">
+                  <mat-icon>print</mat-icon>
+                </div>
+                <div class="info">
+                  <span class="label">Instalada</span>
+                  <strong class="sn">{{ item.novaNumeroSerie }}</strong>
+                  <small class="modelo">{{ item.novaMarca }} {{ item.novaModelo }}</small>
+                  <small class="setor">{{ item.novaSetorNome }}</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Responsável -->
+            <div class="card-footer">
+              <div class="responsavel">
+                <mat-icon>person</mat-icon>
+                <span>{{ item.responsavel }}</span>
+              </div>
+              @if (item.observacao) {
+                <div class="observacao">
+                  <mat-icon matTooltip="{{ item.observacao }}">info</mat-icon>
+                </div>
+              }
+            </div>
+          </mat-card>
+        }
+      </div>
+    </div>
+  }
+</div>

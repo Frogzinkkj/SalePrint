@@ -1,0 +1,210 @@
+<div class="max-w-6xl mx-auto space-y-6 p-6">
+  
+  <!-- Title -->
+  <div class="border-b border-slate-200 pb-4">
+    <h2 class="text-xl font-semibold text-slate-800 flex items-center gap-2">
+      <mat-icon class="text-emerald-600">table</mat-icon>
+      Carga Inicial e Importação Planilha CSV
+    </h2>
+    <p class="text-sm text-slate-600 mt-2">
+      Migre todas as impressoras em lote. O algoritmo automatiza a criação de localidades e setores desconhecidos, limpando espaços em branco.
+    </p>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Left Panel: Model & Template -->
+    <div class="space-y-4">
+      <!-- Template Card -->
+      <mat-card class="p-4 space-y-3">
+        <span class="text-xs uppercase font-bold text-slate-500 tracking-wider block">1. Modelo ou Demo</span>
+        <p class="text-xs text-slate-600 leading-normal">
+          Utilize o layout exato de colunas (delimitadas por vírgula) para a carga ser aceita.
+        </p>
+
+        <div class="space-y-2">
+          <button mat-raised-button (click)="triggerLoadDemo()" class="w-full bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100">
+            <mat-icon class="mr-2">refresh</mat-icon>
+            Carregar planilha demo
+          </button>
+
+          <button mat-raised-button (click)="downloadTemplate()" class="w-full">
+            <mat-icon class="mr-2">download</mat-icon>
+            Baixar layout .CSV
+          </button>
+        </div>
+      </mat-card>
+
+      <!-- Specifications -->
+      <mat-card class="p-4 bg-slate-50 text-xs space-y-2">
+        <span class="font-bold text-slate-800 block">Especificações obrigatórias:</span>
+        <ul class="list-disc pl-4 space-y-1 text-slate-600">
+          <li>Colunas: <strong>localidade</strong>, <strong>setor</strong>, <strong>marca</strong>, <strong>modelo</strong>, <strong>numeroSerie</strong>, <strong>ip</strong>, <strong>status</strong>, <strong>observacao</strong></li>
+          <li>S/N e IP devem ser válidos e preenchidos</li>
+          <li>Status válidos: <code class="bg-white px-1 rounded border">ATIVA</code>, <code class="bg-white px-1 rounded border">BACKUP</code>, <code class="bg-white px-1 rounded border">COM_DEFEITO_INTERNO</code></li>
+        </ul>
+      </mat-card>
+    </div>
+
+    <!-- Right Panel: Upload & Preview -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Drop Zone -->
+      <div
+        class="drop-zone"
+        [class.drag-active]="dragActive"
+        (dragenter)="handleDrag($event)"
+        (dragover)="handleDrag($event)"
+        (dragleave)="dragActive = false"
+        (drop)="handleDrop($event)"
+      >
+        <div class="flex flex-col items-center gap-4">
+          <div class="p-4 bg-slate-100 rounded-full text-slate-500">
+            <mat-icon class="text-4xl">cloud_upload</mat-icon>
+          </div>
+          
+          <div class="text-center">
+            <h4 class="font-bold text-slate-800">Arraste seu arquivo .CSV aqui</h4>
+            <p class="text-xs text-slate-600 mt-1">Ou clique para buscar nos diretórios</p>
+          </div>
+
+          <input 
+            type="file" 
+            #fileInput 
+            hidden 
+            accept=".csv" 
+            (change)="onFileSelected($event)"
+          />
+
+          <button mat-raised-button color="primary" (click)="fileInput.click()">
+            Selecionar arquivo
+          </button>
+        </div>
+      </div>
+
+      <!-- CSV Preview -->
+      @if (csvRows.length > 0) {
+        <mat-card class="p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-slate-800">Dados Identificados ({{ csvRows.length }} linhas)</h4>
+              <p class="text-xs text-slate-600 mt-1">Confirme a visualização antes de enviar</p>
+            </div>
+            <button mat-icon-button (click)="clearCsvRows()" matTooltip="Limpar">
+              <mat-icon class="text-slate-500">close</mat-icon>
+            </button>
+          </div>
+
+          <!-- Preview Table -->
+          <div class="overflow-x-auto border rounded-lg max-h-48">
+            <table class="w-full text-xs">
+              <thead>
+                <tr class="bg-slate-50 border-b">
+                  <th class="font-semibold text-slate-700 p-2 text-left">Localidade</th>
+                  <th class="font-semibold text-slate-700 p-2 text-left">Setor</th>
+                  <th class="font-semibold text-slate-700 p-2 text-left">Marca/Modelo</th>
+                  <th class="font-semibold text-slate-700 p-2 text-left">IP</th>
+                  <th class="font-semibold text-slate-700 p-2 text-left">S/N</th>
+                  <th class="font-semibold text-slate-700 p-2 text-left">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of csvRows.slice(0, 4); track $index) {
+                  <tr class="border-b hover:bg-slate-50/40">
+                    <td class="p-2">{{ row.localidade }}</td>
+                    <td class="p-2">{{ row.setor }}</td>
+                    <td class="p-2 font-bold">{{ row.marca }} - {{ row.modelo }}</td>
+                    <td class="p-2">{{ row.ip }}</td>
+                    <td class="p-2">{{ row.numeroSerie }}</td>
+                    <td class="p-2">{{ row.status }}</td>
+                  </tr>
+                }
+                @if (csvRows.length > 4) {
+                  <tr>
+                    <td [attr.colspan]="6" class="p-2 text-center text-slate-500 italic">
+                      ...e mais {{ csvRows.length - 4 }} equipamentos
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Overwrite Mode -->
+          <div class="flex items-center gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
+            <mat-checkbox [checked]="overwriteMode" (change)="toggleOverwriteMode()"></mat-checkbox>
+            <label class="text-xs text-slate-800 font-semibold cursor-pointer">
+              Ação Crítica: Limpar banco atual antes de restaurar com esta planilha
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex justify-end">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              (click)="executeCsvMigration()"
+              [disabled]="loading"
+              class="gap-2 flex items-center"
+            >
+              @if (loading) {
+                <ng-container>
+                  <mat-spinner diameter="16"></mat-spinner>
+                  <span>Efetuando Migração...</span>
+                </ng-container>
+              } @else {
+                <ng-container>
+                  <mat-icon>play_arrow</mat-icon>
+                  <span>Iniciar Carga no Banco</span>
+                </ng-container>
+              }
+            </button>
+          </div>
+        </mat-card>
+      }
+
+      <!-- Results -->
+      @if (importResult) {
+        <mat-card class="p-5 space-y-4" [class.border-red-200]="importResult.errors.length > 0" [class.border-green-200]="!importResult.errors.length">
+          <div class="flex items-start gap-3">
+            @if (importResult.errors.length === 0) {
+              <mat-icon class="text-emerald-600 text-2xl">check_circle</mat-icon>
+            } @else {
+              <mat-icon class="text-orange-600 text-2xl">warning</mat-icon>
+            }
+            <div>
+              <h4 class="font-bold text-slate-800">Resultado do Processamento</h4>
+              <p class="text-xs text-slate-600">O servidor processou todas as linhas limpando espaços</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 max-w-sm">
+            <div class="bg-white p-3 rounded-lg border border-slate-200">
+              <span class="text-xs text-slate-500 font-bold uppercase block">Importadas</span>
+              <span class="text-2xl font-bold font-mono text-slate-800">{{ importResult.imported }}</span>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200">
+              <span class="text-xs text-slate-500 font-bold uppercase block">Desprezadas</span>
+              <span class="text-2xl font-bold font-mono text-slate-800">{{ importResult.skipped }}</span>
+            </div>
+          </div>
+
+          @if (importResult.errors.length > 0) {
+            <div class="space-y-2">
+              <span class="text-xs font-bold text-red-700 uppercase block">Erros/Avisos:</span>
+              <div class="bg-slate-950 text-red-300 font-mono text-xs p-3 rounded max-h-32 overflow-y-auto space-y-1">
+                @for (err of importResult.errors; track err) {
+                  <p>&gt; {{ err }}</p>
+                }
+              </div>
+            </div>
+          }
+        </mat-card>
+      }
+
+    </div>
+
+  </div>
+
+</div>
