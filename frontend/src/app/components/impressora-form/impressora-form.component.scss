@@ -1,35 +1,408 @@
-/* Tailwind utilities for form */
-.max-w-3xl {
-  max-width: 48rem;
+// Form wrapper - main container
+.form-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0;
 }
 
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
+// Header section
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.12);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+
+  .form-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-subtitle {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+  }
 }
 
-.space-y-6 > * + * {
-  margin-top: 2rem;
+// Back button
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  white-space: nowrap;
+
+  &:hover {
+    color: #1e293b;
+    background: #f8fafc;
+  }
 }
 
-.space-y-4 > * + * {
-  margin-top: 1rem;
+// Error alert
+.alert-error {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: #fef2f2;
+  border-left: 4px solid #dc2626;
+  color: #7f1d1d;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  margin-bottom: 2rem;
+
+  mat-icon {
+    flex-shrink: 0;
+  }
 }
 
-.space-y-2 > * + * {
+// Warning alert
+.alert-warning {
+  padding: 1.25rem;
+  background: #fef08a;
+  border: 1px solid #eab308;
+  color: #713f12;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+// Form container
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  background: white;
+  border: 1px solid rgba(71, 85, 105, 0.08);
+  border-radius: 1rem;
+  padding: 2.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.875rem;
+}
+
+// Form rows
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3.5rem;
+  align-items: start;
+
+  &.form-row-3cols {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    &.form-row-3cols {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Form field
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &.form-field-full {
+    grid-column: 1 / -1;
+  }
+}
+
+// Field header (for buttons)
+.field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+
+  .field-label {
+    display: inline;
+    flex-shrink: 0;
+    margin-bottom: 0 !important;
+  }
+}
+
+// Field label
+.field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+  margin-bottom: 0.75rem;
+}
+
+// Field input
+.field-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  border: 1px solid #cbd5e1;
+  background: rgba(248, 250, 252, 0.2);
+  border-radius: 0.5rem;
+  color: #1e293b;
+  transition: all 150ms ease-in-out;
+  line-height: 1.5;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    background: white;
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1);
+  }
+
+  &:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: #cbd5e1;
+  }
+}
+
+// Field select
+.field-select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 0.5rem;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23475569' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+
+  &:focus {
+    outline: none;
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1);
+  }
+
+  &:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  option {
+    color: #1e293b;
+    background: white;
+  }
+}
+
+// Field textarea
+.field-textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  border: 1px solid #cbd5e1;
+  background: rgba(248, 250, 252, 0.2);
+  border-radius: 0.5rem;
+  color: #1e293b;
+  transition: all 150ms ease-in-out;
+  line-height: 1.6;
+  font-family: inherit;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    background: white;
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1);
+  }
+
+  &::placeholder {
+    color: #cbd5e1;
+  }
+}
+
+// Add button (+ Adicionar)
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #3b82f6;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  border-radius: 0.375rem;
+
+  &:hover:not(:disabled) {
+    color: #1d4ed8;
+    background: rgba(59, 130, 246, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  mat-icon {
+    width: 1rem !important;
+    height: 1rem !important;
+    font-size: 1rem !important;
+  }
+}
+
+// Add field box
+.add-field-box {
+  display: flex;
+  gap: 0.5rem;
+  background: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 0.75rem;
+}
+
+// Add field input
+.add-field-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 0.375rem;
+  color: #1e293b;
+
+  &:focus {
+    outline: none;
+    border-color: #94a3b8;
+  }
+
+  &::placeholder {
+    color: #cbd5e1;
+  }
+}
+
+// Add field button
+.add-field-btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+  background: #10b981;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  white-space: nowrap;
+
+  &:hover {
+    background: #059669;
+  }
+
+  &:active {
+    background: #047857;
+  }
+}
+
+// Form actions (buttons)
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #cbd5e1;
   margin-top: 0.5rem;
 }
 
-.space-y-1 > * + * {
-  margin-top: 0.25rem;
+// Cancel button
+.btn-cancel {
+  padding: 0.625rem 1.5rem;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+
+  &:hover {
+    background: #f8fafc;
+    color: #1e293b;
+  }
 }
 
-.p-6 {
-  padding: 1.5rem;
-}
+// Submit button
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.75rem;
+  border: none;
+  background: #1e293b;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: white;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-.p-4 {
-  padding: 1rem;
+  &:hover:not(:disabled) {
+    background: #0f172a;
+  }
+
+  &:active:not(:disabled) {
+    background: #020617;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  mat-icon {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
 }
 
 .p-3 {
@@ -49,9 +422,19 @@
   padding-right: 0.75rem;
 }
 
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .px-2 {
@@ -62,11 +445,6 @@
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
-}
-
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
 }
 
 .py-4 {
@@ -95,8 +473,39 @@
   margin-bottom: 0.5rem;
 }
 
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
+}
+
+/* Form inputs styling enhancements */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+  }
+}
+
+/* Better field spacing */
+.grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Improve select height consistency */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
 }
 
 .mt-1 {

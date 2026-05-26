@@ -1,114 +1,144 @@
-<div class="header">
-  <h1>Impressoras</h1>
-  <a mat-raised-button color="primary" routerLink="/impressoras/nova">
-    <mat-icon>add</mat-icon> Nova impressora
-  </a>
-</div>
+<div class="list-container">
+  <div class="header">
+    <div>
+      <h1>Impressoras</h1>
+      <p class="subtitle">Gerenciamento de ativos e inventário</p>
+    </div>
+    <a mat-raised-button color="primary" routerLink="/impressoras/nova">
+      <mat-icon>add</mat-icon> Nova impressora
+    </a>
+  </div>
 
-<div class="filtros" (keydown.enter)="$event.preventDefault(); carregar()">
-  <mat-form-field appearance="outline">
-    <mat-label>Buscar IP ou S/N</mat-label>
-    <input matInput [(ngModel)]="busca" (keyup.enter)="carregar()" />
-  </mat-form-field>
+  <!-- Filters Section -->
+  <div class="filtros-card">
+    <div class="filtro-grupo">
+      <mat-form-field appearance="outline" class="filtro-field">
+        <mat-label>Buscar IP ou S/N</mat-label>
+        <input matInput [(ngModel)]="busca" (keyup.enter)="carregar()" />
+      </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Status</mat-label>
-    <mat-select [(ngModel)]="filtroStatus" (selectionChange)="carregar()">
-      <mat-option value="">Todos</mat-option>
-      @for (s of statusOptions; track s) {
-        <mat-option [value]="s">{{ statusLabels[s] }}</mat-option>
+      <mat-form-field appearance="outline" class="filtro-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="filtroStatus" (selectionChange)="carregar()">
+          <mat-option value="">Todos</mat-option>
+          @for (s of statusOptions; track s) {
+            <mat-option [value]="s">{{ statusLabels[s] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtro-field setor-field">
+        <mat-label>Setor</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="filtroSetorTexto"
+          (input)="onSetorInput()"
+          [matAutocomplete]="autoSetor"
+          placeholder="Digite o nome do setor..."
+        />
+        <mat-autocomplete #autoSetor="matAutocomplete" (optionSelected)="onSetorSelecionado($event)">
+          @for (setor of setoresFiltrados; track setor.id) {
+            <mat-option [value]="setor">{{ setor.nome }} ({{ setor.localidadeNome }})</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <div class="filtro-buttons">
+      <button type="button" mat-raised-button color="primary" (click)="carregar()">
+        <mat-icon>search</mat-icon> Filtrar
+      </button>
+      <button type="button" mat-button (click)="limparFiltros()">
+        <mat-icon>clear</mat-icon> Limpar
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="36" class="loading-spinner"></mat-spinner>
+      <p>Carregando impressoras...</p>
+    </div>
+  }
+
+  @if (!loading && totalRegistros > 0) {
+    <div class="resultado-info">
+      <span class="contador">{{ totalRegistros }} impressora(s) encontrada(s)</span>
+    </div>
+
+    <!-- Grid Cards View -->
+    <div class="cards-grid" [hidden]="loading">
+      @for (row of dataSource.data; track row.id) {
+        <div class="card-impressora">
+          <div class="card-header">
+            <div class="marca-modelo">
+              <h3>{{ row.marca }}</h3>
+              <p>{{ row.modelo }}</p>
+            </div>
+            <mat-chip [class]="'status-' + row.status.toLowerCase()">
+              {{ labelStatus(row.status) }}
+            </mat-chip>
+          </div>
+
+          <div class="card-body">
+            <div class="info-row">
+              <span class="label">IP:</span>
+              <span class="value font-mono">{{ row.ip }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">S/N:</span>
+              <span class="value font-mono">{{ row.numeroSerie }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Localidade:</span>
+              <span class="value">{{ row.localidadeNome }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Setor:</span>
+              <span class="value">{{ row.setorNome }}</span>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <button mat-icon-button (click)="verHistorico(row)" matTooltip="Histórico" color="accent">
+              <mat-icon>history</mat-icon>
+            </button>
+            <button mat-icon-button (click)="abrirSubstituicao(row)" matTooltip="Substituição" color="accent">
+              <mat-icon>swap_horiz</mat-icon>
+            </button>
+            <button mat-icon-button (click)="abrirMovimentacao(row)" matTooltip="Movimentar" color="primary">
+              <mat-icon>published_with_changes</mat-icon>
+            </button>
+            <a mat-icon-button [routerLink]="['/impressoras', row.id, 'editar']" matTooltip="Editar" color="primary">
+              <mat-icon>edit</mat-icon>
+            </a>
+          </div>
+        </div>
       }
-    </mat-select>
-  </mat-form-field>
+    </div>
 
-  <mat-form-field appearance="outline" class="setor-field">
-    <mat-label>Setor</mat-label>
-    <input
-      matInput
-      type="text"
-      [(ngModel)]="filtroSetorTexto"
-      (input)="onSetorInput()"
-      [matAutocomplete]="autoSetor"
-      placeholder="Digite o nome do setor..."
-    />
-    <mat-autocomplete #autoSetor="matAutocomplete" (optionSelected)="onSetorSelecionado($event)">
-      @for (setor of setoresFiltrados; track setor.id) {
-        <mat-option [value]="setor">{{ setor.nome }} ({{ setor.localidadeNome }})</mat-option>
-      }
-    </mat-autocomplete>
-  </mat-form-field>
+    <!-- Pagination -->
+    <div class="paginacao-bar">
+      <mat-checkbox [(ngModel)]="exibirTodos" (change)="onExibirTodosChange()">
+        Exibir todos
+      </mat-checkbox>
 
-  <button type="button" mat-raised-button color="primary" (click)="carregar()">Filtrar</button>
-  <button type="button" mat-button (click)="limparFiltros()">Limpar</button>
-</div>
+      <mat-paginator
+        [length]="totalRegistros"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  }
 
-@if (loading) {
-  <mat-spinner diameter="36" class="loading-spinner"></mat-spinner>
-}
-
-@if (totalRegistros > 0) {
-  <p class="contador">{{ totalRegistros }} impressora(s) encontrada(s)</p>
-}
-
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z2" [hidden]="loading">
-  <ng-container matColumnDef="marca">
-    <th mat-header-cell *matHeaderCellDef>Marca</th>
-    <td mat-cell *matCellDef="let row">{{ row.marca }}</td>
-  </ng-container>
-  <ng-container matColumnDef="modelo">
-    <th mat-header-cell *matHeaderCellDef>Modelo</th>
-    <td mat-cell *matCellDef="let row">{{ row.modelo }}</td>
-  </ng-container>
-  <ng-container matColumnDef="ip">
-    <th mat-header-cell *matHeaderCellDef>IP</th>
-    <td mat-cell *matCellDef="let row">{{ row.ip }}</td>
-  </ng-container>
-  <ng-container matColumnDef="numeroSerie">
-    <th mat-header-cell *matHeaderCellDef>S/N</th>
-    <td mat-cell *matCellDef="let row">{{ row.numeroSerie }}</td>
-  </ng-container>
-  <ng-container matColumnDef="status">
-    <th mat-header-cell *matHeaderCellDef>Status</th>
-    <td mat-cell *matCellDef="let row">
-      <mat-chip>{{ labelStatus(row.status) }}</mat-chip>
-    </td>
-  </ng-container>
-  <ng-container matColumnDef="setor">
-    <th mat-header-cell *matHeaderCellDef>Setor</th>
-    <td mat-cell *matCellDef="let row">{{ row.setorNome }} ({{ row.localidadeNome }})</td>
-  </ng-container>
-  <ng-container matColumnDef="acoes">
-    <th mat-header-cell *matHeaderCellDef>Ações</th>
-    <td mat-cell *matCellDef="let row">
-      <button mat-icon-button (click)="verHistorico(row)">
-        <mat-icon>history</mat-icon>
-      </button>
-      <button mat-icon-button (click)="abrirSubstituicao(row)" title="Registrar substituição">
-        <mat-icon>swap_horiz</mat-icon>
-      </button>
-      <button mat-icon-button color="primary" (click)="abrirMovimentacao(row)" title="Movimentar">
-        <mat-icon>published_with_changes</mat-icon>
-      </button>
-      <a mat-icon-button [routerLink]="['/impressoras', row.id, 'editar']">
-        <mat-icon>edit</mat-icon>
-      </a>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
-
-<div class="paginacao-bar">
-  <mat-checkbox [(ngModel)]="exibirTodos" (change)="onExibirTodosChange()">
-    Exibir todos na tabela
-  </mat-checkbox>
-
-  <mat-paginator
-    [length]="totalRegistros"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="pageSizeOptions"
-    (page)="onPageChange($event)"
-    showFirstLastButtons
-  ></mat-paginator>
+  @if (!loading && totalRegistros === 0) {
+    <div class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <h3>Nenhuma impressora encontrada</h3>
+      <p>Tente ajustar os filtros ou cadastre uma nova impressora</p>
+    </div>
+  }
 </div>
