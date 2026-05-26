@@ -81,13 +81,17 @@ Dom Bosco,Portaria,SAMSUNG,ML-2165,Z8Y2819203,192.168.1.112,EM_MANUTENCAO_QUALYC
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
       this.readAndProcessCsvFile(input.files[0]);
+      // Resetar o input para permitir seleção do mesmo arquivo novamente
+      input.value = '';
     }
   }
 
   private readAndProcessCsvFile(file: File): void {
+    console.log('📁 Arquivo selecionado:', file.name, file.size, 'bytes');
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
+      console.log('📄 Conteúdo lido:', text.substring(0, 100));
       this.parseCsvText(text);
     };
     reader.readAsText(file);
@@ -95,30 +99,66 @@ Dom Bosco,Portaria,SAMSUNG,ML-2165,Z8Y2819203,192.168.1.112,EM_MANUTENCAO_QUALYC
 
   private parseCsvText(text: string): void {
     try {
-      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const lines = text.split('\n').filter(l => l.trim().length > 0);
       
       if (lines.length <= 1) {
         alert('O arquivo CSV está vazio ou possui apenas cabeçalhos.');
         return;
       }
 
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      // Detectar linha de cabeçalho (que tem os nomes das colunas)
+      let headerLineIndex = 0;
+      let headerLine = lines[0];
+      
+      // Se a primeira linha tem colunas vazias/headers, pula para encontrar dados reais
+      if (lines[0].toLowerCase().includes('setor') || lines[0].toLowerCase().includes('marca')) {
+        headerLine = lines[0];
+        headerLineIndex = 1;
+      }
+
+      // Parse do cabeçalho - remove colunas vazias
+      const allHeaders = headerLine.split(',').map(h => h.trim().toLowerCase());
+      const validHeaders = allHeaders.map((h, idx) => {
+        // Mapear nomes alternativos para nomes padrão
+        if (h === '' && idx === 0) return 'localidade';
+        if (h === 'setor/local' || h === 'setor') return 'setor';
+        if (h === 's/n' || h === 'série' || h === 'numero serie') return 'numeroserie';
+        if (h === 'marca') return 'marca';
+        if (h === 'modelo') return 'modelo';
+        if (h === 'ip') return 'ip';
+        if (h === 'status') return 'status';
+        if (h === 'data status' || h === 'data' || h === 'observação' || h === 'observacoes') return null;
+        return null;
+      });
+
       const parsedRows: CsvRow[] = [];
 
-      for (let i = 1; i < lines.length; i++) {
+      // Processar linhas de dados
+      for (let i = headerLineIndex; i < lines.length; i++) {
         const values = lines[i].split(',').map(v => v.trim());
-        if (values.length === 0) continue;
+        if (values.filter(v => v.length > 0).length === 0) continue;
 
         const obj: CsvRow = {};
-        headers.forEach((h, index) => {
-          obj[h] = values[index] || '';
+        
+        // Preencher apenas os campos mapeados
+        allHeaders.forEach((h, index) => {
+          const mappedName = validHeaders[index];
+          if (mappedName) {
+            obj[mappedName] = values[index] || '';
+          }
         });
-        parsedRows.push(obj);
+
+        // Validar campos obrigatórios
+        if (obj.ip && obj['numeroserie'] && obj.status) {
+          parsedRows.push(obj);
+        }
       }
 
       this.csvRows = parsedRows;
       this.importResult = null;
+      console.log('✅ CSV parsed:', this.csvRows.length, 'linhas carregadas', this.csvRows);
     } catch (e) {
+      console.error('❌ Erro ao parsear CSV:', e);
       alert('Falha ao analisar formato de texto CSV. Utilize delimitador por vírgula (,).');
     }
   }
@@ -140,11 +180,20 @@ Dom Bosco,Portaria,SAMSUNG,ML-2165,Z8Y2819203,192.168.1.112,EM_MANUTENCAO_QUALYC
   }
 
   executeCsvMigration(): void {
-    if (this.csvRows.length === 0) return;
+    console.log('🎯 BOTÃO CLICADO - executeCsvMigration');
+    console.log('🔍 csvRows atual:', this.csvRows);
+    console.log('📊 Tamanho:', this.csvRows.length);
+    
+    if (this.csvRows.length === 0) {
+      console.error('❌ Nenhuma linha CSV carregada!');
+      return;
+    }
     this.loading = true;
+    console.log('⏳ Enviando requisição...');
 
     this.importacaoService.importarCsv(new File([this.csvRowsToFile()], 'import.csv', { type: 'text/csv' })).subscribe({
       next: (result) => {
+        console.log('✅ Resposta recebida:', result);
         this.importResult = {
           success: true,
           imported: result.totalImportadas,
@@ -161,6 +210,7 @@ Dom Bosco,Portaria,SAMSUNG,ML-2165,Z8Y2819203,192.168.1.112,EM_MANUTENCAO_QUALYC
         }
       },
       error: (err) => {
+        console.error('❌ Erro na requisição:', err);
         this.importResult = {
           success: false,
           imported: 0,
@@ -190,5 +240,9 @@ Dom Bosco,Portaria,SAMSUNG,ML-2165,Z8Y2819203,192.168.1.112,EM_MANUTENCAO_QUALYC
 
   toggleOverwriteMode(): void {
     this.overwriteMode = !this.overwriteMode;
+  }
+
+  triggerFileInput(): void {
+    this.fileInput.nativeElement.click();
   }
 }

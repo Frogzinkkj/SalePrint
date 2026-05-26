@@ -20,6 +20,9 @@ export class ImportacaoService {
   importarCsv(file: File): Observable<ImportacaoResult> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<ImportacaoResult>(`${environment.apiUrl}/importacao/csv`, formData);
+    const url = `${environment.apiUrl}/importacao/csv`;
+    console.log('📤 POST para URL:', url);
+    console.log('📦 FormData com arquivo:', file.name, file.size);
+    return this.http.post<ImportacaoResult>(url, formData);
   }
 }
